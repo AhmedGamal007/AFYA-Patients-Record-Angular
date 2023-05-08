@@ -1,0 +1,89 @@
+<div class="container bg-secondary">
+  <div class="row">
+    <div class="col-1"></div>
+    <div class="col-10">
+        <div class="card flex-row my-5 border-0 shadow rounded-3 overflow-hidden">
+          <div class="card-body p-4 p-sm-5">
+            <h5 class="card-title text-center mb-5 fw-light fs-5">Add Patient</h5>
+              <div class="text-center fw-light fs-5">
+                <form [formGroup]="patientDTO" (submit)="addImage()" >
+
+                  <!-- <input type="text" class="rounded-3 form-control w-50 text-center m-3" formControlName="name" placeholder="Name"> -->
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="validationDefault03">Full Name</label>
+                      <input type="text" class="form-control border border-1 border-dark" formControlName="name" placeholder="Full Name" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      <label for="validationDefault04">Arrive Date</label>
+                      <input type="date" class="form-control border border-1 border-dark" formControlName="arriveDate" id="validationDefault04" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      <label for="validationDefault05">Leave Date</label>
+                      <input type="date" class="form-control border border-1 border-dark"formControlName="leaveDate" id="validationDefault05" required>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-4 mb-3">
+                      <label for="validationDefault01">Type Of Disease</label>
+                      <input type="text" class="form-control border border-1 border-dark" list="diseaseDataList" formControlName="typeOfDisease" placeholder="Disease Type" required>
+                      <datalist id="diseaseDataList" >
+                        <option *ngFor="let patient of patients">{{patient.typeOfDisease}}</option>
+                      </datalist>
+                    </div>
+                    <div class="col-4 mb-3">
+                      <label for="validationDefault02">Examination Date</label>
+                      <input type="date" class="form-control border border-1 border-dark" formControlName="examinationDate" required>
+                    </div>
+                    <div class="col-4 mb-3">
+                      <label for="validationDefaultUsername">Patient's Number</label>
+                        <input type="tel" class="form-control border border-1 border-dark" formControlName="patientNumber" placeholder="Phone Number" required>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <textarea clase="form-control  border border-1 border-dark" style="width: 100%;" formControlName="note" placeholder="Note" required></textarea>
+
+                      <!-- <input type="text" class="form-control" formControlName="note"  placeholder="Note" required> -->
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      <label for="validationDefault04">Passport</label>
+                      <input type="file" class="form-control" (change)="setEvent($event)" id="passportImage" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      <label for="validationDefault05">Status</label>
+                      <select class="form-select" formControlName="status" [class]="status()" required>
+                        <option value="Pending" class="bg-secondary">Pending</option>
+                        <option value="Completed" class="bg-success">Completed</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-4 mb-3">
+                      <label for="validationDefault01">Hospital Name</label>
+                      <input type="text" class="form-control" list="hospitalNameDataList" formControlName="hospitalName" placeholder="Hospital Name" required>
+                      <datalist id="hospitalNameDataList">
+                        <option *ngFor="let patient of patients; let currentIndex = index"  [id]="setConcatId(patient.hospitalName,currentIndex)"  [value]="patient.hospitalName"><p></p></option>
+                      </datalist>
+                    </div>
+                    <div class="col-4 mb-3">
+                      <label for="validationDefault02">Hospital Number</label>
+                      <input type="tel" class="form-control" list="hospitalNumberDataList" formControlName="hospitalNumber" placeholder="Hospital Number" required>
+                      <datalist id="hospitalNumberDataList">
+                        <option *ngFor="let patient of patients">{{patient.hospitalNumber}}</option>
+                      </datalist>
+                    </div>
+                    <div class="col-4 mb-3">
+                      <label for="validationDefaultUsername">Submission Date</label>
+                        <input type="date" class="form-control" formControlName="submissionDate" required>
+                    </div>
+                  </div>
+                  <button class="btn btn-dark text-light" (click)="test()" type="submit">Add Patient</button>
+                </form>
+              </div>
+          </div>
+        </div>
+    </div>
+    <div class="col-2"></div>
+  </div>
+</div>

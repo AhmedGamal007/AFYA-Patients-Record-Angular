@@ -1,0 +1,21 @@
+.dataTables_length select {
+  color:white;
+}
+
+/* Is for the top left box, show 10 entries etc.. */
+
+.dataTables_filter input {
+  color:white;
+}
+
+/* Is for the search box top right */
+
+.dataTables_info {
+  color:white;
+}
+
+/* Is for the table info on the bottom left */
+
+.dataTables_paginate {
+  color:white;
+}

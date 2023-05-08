@@ -1,0 +1,79 @@
+
+    <table class="table py-0 table-striped table-dark border-light mt-5" id="recordsTable">
+    <thead>
+      <tr>
+        <th scope="col">id</th>
+        <th scope="col">Full Name</th>
+        <th scope="col">Passport</th>
+        <th scope="col">Arrive Date</th>
+        <th scope="col">Leave Date</th>
+        <th scope="col">Type of Disease</th>
+        <th scope="col">Hospital Name</th>
+        <th scope="col">Hospital Number</th>
+        <th scope="col">Examination Date</th>
+        <th scope="col">Patient's Number</th>
+        <th scope="col">Submission Date</th>
+        <th scope="col">Note</th>
+        <th scope="col">Status</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let patient of patients; let currentIndex = index">
+        <th>{{currentIndex+1}}</th>
+        <td>{{patient.name}}</td>
+        <td ><button class="btn btn-secondary" [id]="'modalButton'+patient.id" (mouseover)="viewModalButton(patient.id)"  data-bs-toggle="modal" >View</button></td>
+        <td>A{{patient.arriveDate}}</td>
+        <td>L{{patient.leaveDate}}</td>
+        <td>{{patient.typeOfDisease}}</td>
+        <td>{{patient.hospitalName}}</td>
+        <td>{{patient.hospitalNumber}}</td>
+        <td>E{{patient.examinationDate}}</td>
+        <td>{{patient.patientNumber}}</td>
+        <td>#{{patient.submissionDate}}</td>
+        <td><button class="btn btn-secondary" [id]="'noteButton'+patient.id" (mouseover)="viewNoteButton(patient.id)"  data-bs-toggle="modal" >View</button></td>
+        <td><button type="button" disabled [class]="viewStatus(patient.status) ?'btn btn-success' : 'btn btn-secondary'">{{patient.status}}</button></td>
+        <td>
+          <div class="btn-group" role="group" >
+            <button type="button" class="btn btn-success" [routerLink]="'/editPatient/'+patient.id"><i class="fa fa-edit"></i></button>
+            <button type="button" class="btn btn-danger" (click)="deletePatient(patient.id)"><i class="fa fa-trash"></i></button>
+          </div>
+        </td>
+        <!-- Modal -->
+  <div class="modal fade" [id]="'passportModal'+patient.id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-black">{{patient.name}}</h5>
+        </div>
+        <div class="modal-body">
+          <img [src]="'../../../assets/passports/'+patient.passportPath" class="rounded" width="300" height="300">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" [id]="'noteModal'+patient.id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-black">{{patient.name}}</h5>
+        </div>
+        <div class="modal-body text-black">
+          {{patient.note}}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+        </tr>
+    </tbody>
+
+    </table>
+
