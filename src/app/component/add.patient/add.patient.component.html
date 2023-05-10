@@ -8,7 +8,6 @@
               <div class="text-center fw-light fs-5">
                 <form [formGroup]="patientDTO" (submit)="addImage()" >
 
-                  <!-- <input type="text" class="rounded-3 form-control w-50 text-center m-3" formControlName="name" placeholder="Name"> -->
                   <div class="row">
                     <div class="col-md-6 mb-3">
                       <label for="validationDefault03">Full Name</label>
@@ -44,15 +43,15 @@
                     <div class="col-md-6 mb-3">
                       <textarea clase="form-control  border border-1 border-dark" style="width: 100%;" formControlName="note" placeholder="Note" required></textarea>
 
-                      <!-- <input type="text" class="form-control" formControlName="note"  placeholder="Note" required> -->
                     </div>
                     <div class="col-md-3 mb-3">
                       <label for="validationDefault04">Passport</label>
                       <input type="file" class="form-control" (change)="setEvent($event)" id="passportImage" required>
                     </div>
-                    <div class="col-md-3 mb-3">
+                    <div class="col-3 mb-3">
                       <label for="validationDefault05">Status</label>
                       <select class="form-select" formControlName="status" [class]="status()" required>
+                        <option disabled selected hidden>Choose..</option>
                         <option value="Pending" class="bg-secondary">Pending</option>
                         <option value="Completed" class="bg-success">Completed</option>
                       </select>
@@ -74,11 +73,33 @@
                       </datalist>
                     </div>
                     <div class="col-4 mb-3">
-                      <label for="validationDefaultUsername">Submission Date</label>
-                        <input type="date" class="form-control" formControlName="submissionDate" required>
+                      <label for="validationDefaultUsername">Entry Date</label>
+                        <input type="date" class="form-control" formControlName="submissionDate">
                     </div>
                   </div>
-                  <button class="btn btn-dark text-light" (click)="test()" type="submit">Add Patient</button>
+                  <div class="row">
+                    <div class="col-4">
+                          <label>Sent By</label>
+                          <input type="text" class="form-control" id="sentByText" formControlName="sentBy" /> <!--selectText > sentByText, selectList > sentByState -->
+                    </div>
+                    <div class="col-4 mb-3">
+                      <label for="sentByState">Select Employee</label>
+                      <select id="sentByState" (change)="listRedirect()" class="form-control" >
+                        <option  selected disabled hidden id="sentByDefault">Choose..</option>
+                        <option *ngFor="let employee of employees;" [id]="employee.employeeName">{{setEmployeeId(employee)}}{{employee.employeeName}}</option>
+                        <option>Other...</option>
+                      </select>
+                    </div>
+                    <div class="col-4">
+                      <label >Employee Action</label>
+                      <div class="btn-group w-100" role="group">
+                      <input class="btn btn-dark text-light" id="addEmployeeButton" (click)="addToList()" type="button" value="Add" hidden/>
+                      <input class="btn btn-dark text-light" (click)="removeFromList()"  type="button" value="Remove"/>
+                    </div>
+                    </div>
+
+                  </div>
+                  <button class="btn btn-dark text-light" type="submit">Add Patient</button>
                 </form>
               </div>
           </div>

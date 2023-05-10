@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ResponseViewModel } from '../model/responseviewmodel';
 import { Observable } from 'rxjs';
 
 
@@ -12,13 +11,14 @@ export class ProductService{
 
   constructor(private _http:HttpClient){}
 
-    getAllPatients(): Observable<any>{
-        return this._http.get<any>('http://localhost:8080/afya/viewPatients')
-    }
 
     uploadImage(formdata: FormData): Observable<any>{
       return this._http.post<any>('http://localhost:8080/afya/upload',formdata);
     }
+    getAllPatients(): Observable<any>{
+      return this._http.get<any>('http://localhost:8080/afya/viewPatients')
+  }
+
 
     addPatient(data:any): Observable<any>{
       return this._http.post<any>('http://localhost:8080/afya/addPatient',data);

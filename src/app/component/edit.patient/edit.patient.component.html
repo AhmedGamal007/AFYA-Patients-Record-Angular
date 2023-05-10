@@ -8,7 +8,6 @@
               <div class="text-center fw-light fs-5">
                 <form [formGroup]="patientDTO" (submit)="submit()" >
 
-                  <!-- <input type="text" class="rounded-3 form-control w-50 text-center m-3" formControlName="name" placeholder="Name"> -->
                   <div class="row">
                     <div class="col-md-6 mb-3">
                       <label for="validationDefault03">Full Name</label>
@@ -44,7 +43,6 @@
                     <div class="col-md-6 mb-3">
                       <textarea clase="form-control  border border-1 border-dark" style="width: 100%;" formControlName="note" placeholder="Note" required></textarea>
 
-                      <!-- <input type="text" class="form-control" formControlName="note"  placeholder="Note" required> -->
                     </div>
                     <div class="col-md-3 mb-3">
                       <label for="validationDefault04">Passport</label>
@@ -74,8 +72,17 @@
                       </datalist>
                     </div>
                     <div class="col-4 mb-3">
-                      <label for="validationDefaultUsername">Submission Date</label>
-                        <input type="date" class="form-control" formControlName="submissionDate" required>
+                      <label for="validationDefaultUsername">Entry Date</label>
+                        <input type="date" class="form-control" formControlName="submissionDate">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-4 mb-3 offset-4">
+                      <label for="sentByState">Select Employee</label>
+                      <select id="sentByState" class="form-control" formControlName="sentBy" >
+                        <option  selected disabled hidden id="sentByDefault">Choose..</option>
+                        <option *ngFor="let employee of employees;" [id]="employee.employeeName">{{employee.employeeName}}</option>
+                      </select>
                     </div>
                   </div>
                   <button class="btn btn-dark text-light" type="submit">Save</button>

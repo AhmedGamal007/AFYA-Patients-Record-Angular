@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Employee} from 'src/app/model/employee';
 import { Patient } from 'src/app/model/patient';
+import { EmployeeService } from 'src/app/service/employee.service';
 import { ProductService } from 'src/app/service/patient.service';
 
 @Component({
@@ -15,9 +17,11 @@ export class AddPatientComponent implements OnInit{
   mode="";
   patientDTO: FormGroup;
   event: any;
+  currentEmployee:Employee = new Employee();
+  employees: Employee[] = [];
   patients: Patient[] = [];
   imageId:String;
-  constructor(private router:Router,private formBuilder:FormBuilder,private patientService:ProductService){
+  constructor(private router:Router,private formBuilder:FormBuilder,private patientService:ProductService,private employeeService:EmployeeService){
   }
 
 ;
@@ -26,7 +30,10 @@ export class AddPatientComponent implements OnInit{
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
-
+    this.employeeService.getAllEmployees().subscribe(response=>{
+      console.log(response)
+      this.employees = response
+    })
     this.patientService.getAllPatients().subscribe(
       response=>{
         console.log(response)
@@ -36,8 +43,8 @@ export class AddPatientComponent implements OnInit{
         this.imageId=(this.getLastId()+"x");
         console.log(this.imageId);
       });
-    console.log("I am working");
 
+      console.log((new Date()).getUTCMonth().toString().length)
     this.patientDTO=this.formBuilder.group({
       name: new FormControl(null,[Validators.required]),
       passportPath: new FormControl(null,[Validators.required]),
@@ -48,43 +55,79 @@ export class AddPatientComponent implements OnInit{
       typeOfDisease: new FormControl(null,[Validators.required]),
       examinationDate: new FormControl(null,[Validators.required]),
       patientNumber: new FormControl(null,[Validators.required]),
-      submissionDate: new FormControl(null,[Validators.required]),
+      submissionDate: new FormControl({value: new Date().toJSON().slice(0,10),disabled:true},Validators.required),
       note: new FormControl(null,[Validators.required]),
-      status: new FormControl(null,[Validators.required]),
+      status: new FormControl({value:"Choose..",disabled:false},[Validators.required]),
+      sentBy: new FormControl({value:null,disabled:true},[Validators.required])
     });
-
-    // this.patientDTO.patchValue({
-    //   name: "adsd"
-    // })
-      //  this.patientDTO.patchValue({
-    //    arriveDate: "2010-10-10"
-    //  })
-
-
-    // console.log(document.getElementById("hospitalNameDataList"));
 
 
   }
   setConcatId(dataListOption:String,id:number):string{
     return dataListOption+""+id;
   }
-  // check(){
-  //   console.log("sssssssssssssWWWWss")
-  //   console.log(this.patients);
-  //   for (let i = 0; i < this.patients.length; i++) {
-  //     this.duplicate.push(this.patients[i].hospitalName);
-      // for (let j = 0; j < this.duplicate.length; j++) {
-      //   if(this.patients[i].hospitalName == this.duplicate[j]){
-      //     console.log("asdadasd")
+  setEmployeeId(employee:Employee){
+    var listEmployee = document.getElementById(employee.employeeName) as HTMLInputElement;
+      listEmployee.setAttribute("data-seed",""+employee.id)
+  }
+  removeFromList() {
+     var listOption = document.getElementById("sentByState") as HTMLInputElement;
+    var def = document.getElementById("sentByDefault") as HTMLInputElement;
+     var textField = document.getElementById("selectText") as HTMLInputElement;
+    if (listOption.value == def.value || listOption.value == "Other...") {
+        alert("Choose An Option Before Deleting.")
+        return;
+    }
+    else{
+      let empId= +(document.getElementById(listOption.value) as HTMLInputElement).getAttribute("data-seed");
 
-      //     document.getElementById(this.duplicate[j]+""+i).remove();
-      //   }
-      // }
 
-  //   }
-  //   console.log(this.duplicate)
-  // }
+       this.employeeService.removeEmployee(empId).subscribe(response=>{
 
+        alert("Employee Deleteded");
+        window.location.reload();
+       })
+
+    }
+
+  }
+  addToList() {
+    var listText = (<HTMLInputElement>document.getElementById("sentByText"));
+    var listOption = (<HTMLInputElement>document.getElementById("sentByState"));
+
+    this.currentEmployee.employeeName=listText.value
+    this.currentEmployee.id=null;
+    this.employeeService.addEmployee(this.currentEmployee).subscribe(response=>{
+
+    })
+    listOption.innerHTML+= "<option>"+listText.value+"</option>";
+    listOption.value = listText.value;
+
+    this.listRedirect();
+  }
+  listRedirect(){
+    var listOption = (<HTMLInputElement>document.getElementById("sentByState"));
+    var listText = (<HTMLInputElement>document.getElementById("sentByText"));
+    if(listOption.value == "Other..."){
+      $("#addEmployeeButton").removeAttr("hidden");
+      listText.removeAttribute("disabled")
+      return false;
+    }else{
+      $("#addEmployeeButton").attr("hidden","true");
+      listText.setAttribute("disabled","true");
+      if(listOption.value == "Choose.."){
+      listText.value = "";
+    }else{
+      listText.value = listOption.value;
+    }
+    return true;
+    }
+
+}
+  setCurrentEmployee(employee:Employee){
+    console.log(employee)
+    this.currentEmployee = employee;
+  }
   getLastId(){
 
     return this.lastId;
@@ -100,6 +143,7 @@ export class AddPatientComponent implements OnInit{
   }
   setEvent(event:any):void {
     this.event=event;
+    console.log(this.patientDTO.getRawValue())
   }
 
  addImage(){
@@ -131,7 +175,5 @@ export class AddPatientComponent implements OnInit{
       return null;
     }
   }
-  test(){
-    console.log(this.patientDTO.getRawValue().note);
-  }
+  
 }

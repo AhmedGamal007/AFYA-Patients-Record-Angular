@@ -12,4 +12,5 @@ export class Patient{
     submissionDate:Date;
     note:String;
     status:String;
+    sentBy:String;
 }

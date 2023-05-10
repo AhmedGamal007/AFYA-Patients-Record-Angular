@@ -19,22 +19,51 @@ export class RecordsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+
+
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
     this.productService.getAllPatients().subscribe(
       response=>{
         this.patients = response;
         console.log(this.patients);
-
         $(document).ready(function () {
-          console.log("Hello");
-          $('#recordsTable').DataTable({
-            lengthMenu: [
-              [10, 25, 50, -1],
-              [10, 25, 50, 'All'],
-          ],
-        });
-        });
+          // Setup - add a text input to each footer cell
+          $('#recordsTable tfoot th').each(function () {
+              var title = $(this).text();
+              if(title != "Passport")
+              if(title != "Note")
+              if(title != "Action")
+              $(this).html('<input type="text" id="Search ' + title + '"  placeholder="Search ' + title + '" class="col-12" />');
+          });
+
+          // DataTable
+          var table = $('#recordsTable').DataTable({
+            "autoWidth":false,
+            'columnDefs': [{
+              "targets": [2,11,14],
+              "orderable": false
+          }],
+              initComplete: function () {
+                  // Apply the search
+                  this.api()
+                      .columns()
+                      .every(function () {
+                          var that = this;
+
+                          $('input', this.footer()).on('keyup change clear', function () {
+                            let x = document.getElementById(""+$(this).attr("placeholder")) as HTMLInputElement
+
+                              if (that.search() !== x.value) {
+                                  that.search(x.value).draw();
+                              }
+                          });
+                      });
+              },
+          });
+      });
+
       });
 
   }
