@@ -33,4 +33,7 @@ export class ProductService{
     editPatient(id:number,data:any): Observable<any>{
       return this._http.put<any>('http://localhost:8080/afya/editPatient/'+id,data);
     }
+    addToFinance(id:number): Observable<any>{
+      return this._http.post<any>('http://localhost:8080/afya/addToFinance/'+id,null);
+    }
 }

@@ -9,13 +9,15 @@ import { AddPatientComponent } from './component/add.patient/add.patient.compone
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DataTablesModule } from 'angular-datatables';
 import { EditPatientComponent } from './component/edit.patient/edit.patient.component';
+import { FinanceComponent } from './finance/finance.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RecordsComponent,
     AddPatientComponent,
-    EditPatientComponent
+    EditPatientComponent,
+    FinanceComponent
   ],
   imports: [
     BrowserModule,

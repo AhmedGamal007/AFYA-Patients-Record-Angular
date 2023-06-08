@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Observable, Subscriber } from 'rxjs';
 import { Employee } from 'src/app/model/employee';
 import { Patient } from 'src/app/model/patient';
 import { EmployeeService } from 'src/app/service/employee.service';
@@ -23,6 +24,8 @@ export class EditPatientComponent implements OnInit{
 
   }
   ngOnInit(): void {
+    let loading = document.getElementById('loading');
+    loading.style.visibility = 'visible';
     this.employeeService.getAllEmployees().subscribe(response=>{
       this.employees = response
     })
@@ -67,6 +70,7 @@ export class EditPatientComponent implements OnInit{
               status: this.currentPatient.status,
               sentBy: this.currentPatient.sentBy,
             })
+            loading.style.visibility = 'hidden';
           })
       }
     })
@@ -82,35 +86,68 @@ export class EditPatientComponent implements OnInit{
       return null;
     }
   }
-  addImage(){
-    const file= this.event.target.files[0];
-    console.log(file);
-    const formdata = new FormData();
-    formdata.append('image',file,this.currentPatient.id+"x"+file.name)
+  // addImage(){
+  //   const file= this.event.target.files[0];
+  //   console.log(file);
+  //   const formdata = new FormData();
+  //   formdata.append('image',file,this.currentPatient.id+"x"+file.name)
 
-     this.patientService.uploadImage(formdata).subscribe(res => {
+  //    this.patientService.uploadImage(formdata).subscribe(res => {
 
-      },
-      err=>{
-        return;
-      });
+  //     },
+  //     err=>{
+  //       return;
+  //     });
+  //     this.patientDTO.patchValue({
+  //       passportPath: this.currentPatient.id+"x"+file.name
+  //     })
+
+
+  // }
+  addImageBase64(){
+    if(this.event == null || this.event.target.files.length == 0){
+      this.submit();
+      return;
+    }
+    const target= this.event.target as HTMLInputElement;
+    const file: File =(target.files as FileList)[0];
+    this.convertToBase64(file);
+
+  }
+  convertToBase64(file:File){
+    const observable = new Observable((subscriber: Subscriber<any>)=>{
+      this.readFile(file,subscriber)
+    })
+    observable.subscribe((base64Value)=>{
       this.patientDTO.patchValue({
-        passportPath: this.currentPatient.id+"x"+file.name
+        passportPath: base64Value,
       })
-
-
+      this.submit();
+    })
+  }
+  readFile(file: File, subscriber : Subscriber<any>){
+    const filereader = new FileReader();
+    filereader.readAsDataURL(file);
+    filereader.onload = () => {
+      subscriber.next(filereader.result);
+      subscriber.complete();
+    }
+    filereader.onerror = () => {
+      subscriber.error()
+      subscriber.complete()
+    }
   }
   setEvent(event:any):void {
     this.event=event;
   }
-  
-  submit(){
-      if(this.event != null && this.event.target.files.length>0){
-        this.addImage()
-      }
 
+  submit(){
+    console.log(this.patientDTO.getRawValue());
     this.patientService.editPatient(this.currentPatient.id, this.patientDTO.getRawValue()).subscribe(res=>{
       console.log(res);
+      if(this.patientDTO.getRawValue().status=="Completed"){
+        this.patientService.addToFinance(res.id).subscribe(res=>{})
+      }
       alert("Record Edited Sucessfully");
       window.location.reload();
     });

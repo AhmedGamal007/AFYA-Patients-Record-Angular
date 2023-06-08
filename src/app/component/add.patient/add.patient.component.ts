@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Employee} from 'src/app/model/employee';
 import { Patient } from 'src/app/model/patient';
 import { EmployeeService } from 'src/app/service/employee.service';
 import { ProductService } from 'src/app/service/patient.service';
+import { Observable, Subscriber } from 'rxjs';
 
 @Component({
   selector: 'app-add.patient',
@@ -14,12 +15,12 @@ import { ProductService } from 'src/app/service/patient.service';
 export class AddPatientComponent implements OnInit{
   duplicate:String[]=[];
   lastId:number;
-  mode="";
+  base64="";
   patientDTO: FormGroup;
   event: any;
   currentEmployee:Employee = new Employee();
-  employees: Employee[] = [];
   patients: Patient[] = [];
+  employees: Employee[] = [];
   imageId:String;
   constructor(private router:Router,private formBuilder:FormBuilder,private patientService:ProductService,private employeeService:EmployeeService){
   }
@@ -94,7 +95,10 @@ export class AddPatientComponent implements OnInit{
   addToList() {
     var listText = (<HTMLInputElement>document.getElementById("sentByText"));
     var listOption = (<HTMLInputElement>document.getElementById("sentByState"));
-
+    if(listText.value.length == 0 ){
+      alert("Enter Employee Name First");
+      return
+    }
     this.currentEmployee.employeeName=listText.value
     this.currentEmployee.id=null;
     this.employeeService.addEmployee(this.currentEmployee).subscribe(response=>{
@@ -134,9 +138,11 @@ export class AddPatientComponent implements OnInit{
   }
 
   submit(){
-    console.log(this.patientDTO.getRawValue());
-    this.patientService.addPatient(this.patientDTO.getRawValue()).subscribe(res=>{
-      console.log(res);
+
+   this.patientService.addPatient(this.patientDTO.getRawValue()).subscribe(res=>{
+      if(this.patientDTO.getRawValue().status=="Completed"){
+        this.patientService.addToFinance(res.id).subscribe(res=>{})
+      }
       alert("Record Added Sucessfully");
       window.location.reload();
     });
@@ -145,27 +151,60 @@ export class AddPatientComponent implements OnInit{
     this.event=event;
     console.log(this.patientDTO.getRawValue())
   }
+  //Converting Image to 64 Base Code
+  addImageBase64(){
+    if(this.event == null || this.event.target.files.length == 0){
+      this.submit()
+      return;
+    }
+    const target= this.event.target as HTMLInputElement;
+    const file: File =(target.files as FileList)[0];
+    this.convertToBase64(file);
 
- addImage(){
-    console.log(this.event.target.files.length);
-    if(this.event.target.files.length > 0){
-    const file= this.event.target.files[0];
-    console.log(file);
-    const formdata = new FormData();
-    formdata.append('image',file,this.imageId+file.name)
-
-     this.patientService.uploadImage(formdata).subscribe(res => {
-
-      },
-      err=>{
-        return
-      });
+  }
+  convertToBase64(file:File){
+    const observable = new Observable((subscriber: Subscriber<any>)=>{
+      this.readFile(file,subscriber)
+    })
+    observable.subscribe((d)=>{
       this.patientDTO.patchValue({
-        passportPath: this.imageId+file.name
+        passportPath: d,
       })
       this.submit();
+    })
+  }
+  readFile(file: File, subscriber : Subscriber<any>){
+    const filereader = new FileReader();
+    filereader.readAsDataURL(file);
+    filereader.onload = () => {
+      subscriber.next(filereader.result);
+      subscriber.complete();
+    }
+    filereader.onerror = () => {
+      subscriber.error()
+      subscriber.complete()
     }
   }
+//  addImage(){
+
+//     if(this.event.target.files.length > 0){
+//     const file= this.event.target.files[0];
+//     console.log(file);
+//     const formdata = new FormData();
+//     formdata.append('image',file,this.imageId+file.name)
+
+//      this.patientService.uploadImage(formdata).subscribe(res => {
+
+//       },
+//       err=>{
+//         return
+//       });
+//       this.patientDTO.patchValue({
+//         passportPath: this.imageId+file.name
+//       })
+//       this.submit();
+//     }
+//   }
   status(){
     if (this.patientDTO.getRawValue().status == "Pending") {
       return "bg-secondary";
@@ -175,5 +214,5 @@ export class AddPatientComponent implements OnInit{
       return null;
     }
   }
-  
+
 }

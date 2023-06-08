@@ -1,9 +1,9 @@
 
 
-    <table class="table table-striped table-dark border-light mt-5" style="width:fit-content;" id="recordsTable">
+    <table class="table table-striped table-dark border-light mt-5" style="width:100vw;" id="recordsTable">
     <thead>
       <tr>
-        <th scope="col">id</th>
+        <th scope="col">Patient ID</th>
         <th scope="col">Full Name</th>
         <th scope="col">Passport</th>
         <th scope="col">Arrive Date</th>
@@ -21,8 +21,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let patient of patients; let currentIndex = index">
-        <th>{{currentIndex+1}}</th>
+      <tr *ngFor="let patient of patients;">
+        <th>{{patient.id}}</th>
         <td>{{patient.name}}</td>
         <td ><button class="btn btn-secondary" [id]="'modalButton'+patient.id" (mouseover)="viewModalButton(patient.id)"  data-bs-toggle="modal" >View</button></td>
         <td>{{patient.arriveDate}}</td>
@@ -50,7 +50,7 @@
           <h5 class="modal-title text-black">{{patient.name}}</h5>
         </div>
         <div class="modal-body">
-          <img [src]="'../../../assets/passports/'+patient.passportPath" class="rounded" width="300" height="300">
+          <img [src]="patient.passportPath" class="rounded" width="300" height="300">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -79,17 +79,17 @@
     </tbody>
     <tfoot>
       <tr>
-        <th>id</th>
-        <th>Full Name</th>
+        <th>ID</th>
+        <th>Name</th>
         <th>Passport</th>
-        <th>Arrive Date</th>
-        <th>Leave Date</th>
-        <th>Type of Disease</th>
-        <th>Hospital Name</th>
-        <th>Hospital Number</th>
-        <th>Examination Date</th>
-        <th>Patient's Number</th>
-        <th>Entry Date</th>
+        <th>Arrive</th>
+        <th>Leave</th>
+        <th>Disease</th>
+        <th>Hosp.Name</th>
+        <th>Hosp.Number</th>
+        <th>Examination</th>
+        <th>Number</th>
+        <th>Entry</th>
         <th>Note</th>
         <th>Status</th>
         <th>Sent By</th>
@@ -98,5 +98,9 @@
   </tfoot>
 
     </table>
-
+    <div id="loading" class="loading text-center">
+      <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
 

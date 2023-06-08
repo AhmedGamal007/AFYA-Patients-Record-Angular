@@ -19,7 +19,10 @@ export class RecordsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    let table = document.getElementById('recordsTable');
+    let loading = document.getElementById('loading');
+    loading.style.visibility = 'visible';
+    table.style.visibility = 'hidden';
 
 
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
@@ -27,7 +30,6 @@ export class RecordsComponent implements OnInit {
     this.productService.getAllPatients().subscribe(
       response=>{
         this.patients = response;
-        console.log(this.patients);
         $(document).ready(function () {
           // Setup - add a text input to each footer cell
           $('#recordsTable tfoot th').each(function () {
@@ -63,14 +65,12 @@ export class RecordsComponent implements OnInit {
               },
           });
       });
-
+      table.style.visibility = 'visible';
+      loading.style.visibility = 'hidden';
       });
 
   }
 
-  viewPassport(imagePath:String){
-    alert(imagePath);
-  }
 
   viewStatus(status:String){
     if (status == "Pending") {

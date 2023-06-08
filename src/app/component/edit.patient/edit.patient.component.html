@@ -1,3 +1,4 @@
+<div class="bg-secondary">
 <div class="container bg-secondary">
   <div class="row">
     <div class="col-1"></div>
@@ -6,7 +7,7 @@
           <div class="card-body p-4 p-sm-5">
             <h5 class="card-title text-center mb-5 fw-light fs-5">{{currentPatient.name}}</h5>
               <div class="text-center fw-light fs-5">
-                <form [formGroup]="patientDTO" (submit)="submit()" >
+                <form [formGroup]="patientDTO" (submit)="addImageBase64()" >
 
                   <div class="row">
                     <div class="col-md-6 mb-3">
@@ -46,7 +47,7 @@
                     </div>
                     <div class="col-md-3 mb-3">
                       <label for="validationDefault04">Passport</label>
-                      <input type="file" class="form-control" (change)="setEvent($event)" id="passportImage">
+                      <input type="file" class="form-control" (change)="setEvent($event)" id="passportImage" accept="image/*">
                     </div>
                     <div class="col-md-3 mb-3">
                       <label for="validationDefault05">Status</label>
@@ -95,3 +96,10 @@
     <div class="col-2"></div>
   </div>
 </div>
+</div>
+<div id="loading" class="loading text-center">
+  <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
